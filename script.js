@@ -78,7 +78,7 @@ function closeMenu() {
     if (navMenu) navMenu.classList.remove('active');
 }
 
-// Render PPTs with Delete Button
+// Render PPTs with View-Only button (No Download for PowerPoint)
 function renderPPTs(filter = 'all') {
     const container = document.getElementById("ppt-container");
     if (!container) return;
@@ -90,7 +90,7 @@ function renderPPTs(filter = 'all') {
             <h3>${item.title}</h3>
             <p>${item.desc}</p>
             <div class="card-actions">
-                <a href="${item.link}" class="btn-download" ${item.link !== '#' ? 'download' : ''}><i class="fa-solid fa-file-powerpoint"></i> داگرتن</a>
+                <a href="${item.link}" target="_blank" class="btn-download" style="background: #3b82f6;"><i class="fa-solid fa-eye"></i> سەحکرنا وانەیێ</a>
                 <button class="btn-edit admin-only" onclick="editPPT(${item.id})">
                     <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
                 </button>
