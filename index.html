@@ -73,7 +73,7 @@
             <h2 class="section-title">تاقیکرن (کویز)</h2>
             <div id="quiz-container"></div>
         </section>
-         <!-- Admin Control Panel (Only visible for Admin) -->
+<!-- Admin Control Panel (Only visible for Admin) -->
 <section class="admin-panel admin-only" id="admin-panel">
     <h2 class="section-title"><i class="fa-solid fa-plus-circle"></i> زێدەکرنا ناوەرۆکا نوی (تەنێ بۆ ئەدمینی)</h2>
     <div class="admin-card">
@@ -89,7 +89,13 @@
                     <option value="12">پۆلا 12</option>
                 </select>
                 <input type="text" id="ppt-desc-input" placeholder="کورتە ڕوونکردنەوە..." required>
-                <input type="url" id="ppt-link-input" placeholder="لینکا داگرتنێ (Drive / Mega)" required>
+                
+                <!-- هەڵبژاردنا فایلی پاوەرپۆینت ژ کۆمپیوتەری -->
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <label style="font-size: 0.9rem; color: #555; display: block; margin-bottom: 5px;">فایلا پاوەرپۆینت (PPTX) ژ کۆمپیوتەری هەڵبژێرە:</label>
+                    <input type="file" id="ppt-file-input" accept=".ppt, .pptx" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: #fff;">
+                </div>
+
                 <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> زێدەکرن</button>
             </form>
         </div>
@@ -99,7 +105,13 @@
             <h3><i class="fa-solid fa-file-pdf"></i> زێدەکرنا پرسیارێن وەزاری</h3>
             <form onsubmit="addNewMinisterial(event)">
                 <input type="text" id="pdf-title-input" placeholder="سەردێری فایلی (نموونە: پرسیارێن 2024 خولا 1)" required>
-                <input type="url" id="pdf-link-input" placeholder="لینکا فایلا PDF" required>
+                
+                <!-- هەڵبژاردنا فایلی PDF ژ کۆمپیوتەری -->
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <label style="font-size: 0.9rem; color: #555; display: block; margin-bottom: 5px;">فایلا PDF ژ کۆمپیوتەری هەڵبژێرە:</label>
+                    <input type="file" id="pdf-file-input" accept=".pdf" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: #fff;">
+                </div>
+
                 <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> زێدەکرن</button>
             </form>
         </div>
@@ -183,6 +195,13 @@
             <i class="fa-solid fa-circle-check"></i> دەستخۆش! تێبینیا تە ب سەرکەفتن هاتە ڕەوانەکرن.
         </div>
     </div>
+    <!-- Admin Feedback / Messages Box -->
+        <div class="admin-form-box" style="grid-column: 1 / -1; margin-top: 2rem; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h3><i class="fa-solid fa-comments"></i> تێبینی و پێشنیارێن هاتنە هنارتن (لایی ئەدمینی)</h3>
+            <div id="admin-feedbacks-container" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                <p style="color: #666; font-style: italic;">هێشتا چ تێبینی نەهاتینە نڤێسین.</p>
+            </div>
+        </div>
 </section>
 
         <!-- About Section -->

@@ -29,7 +29,7 @@ let quizzes = [
     },
     {
         id: 2,
-        question: "دەسەڵاتا دەرکرنا دراڤی (پارە)ی ل دەست خۆدیێ چ لایەنەکییە؟",
+        question: "دەسەڵاتا دەرکرنا دراڤی (پارە)ی ل دەست خۆدیێ چ لایەنەکییە?",
         options: [
             "بەنکێن بازرگانی یێن تایبەت",
             "بەنکا ناوەندی یا دەولەتێ",
@@ -59,6 +59,7 @@ function toggleAdmin() {
         renderPPTs();
         renderMinisterials();
         renderQuizzes();
+        renderFeedbacks();
     } else if (password !== null) {
         alert("پاسوۆرد شاشە!");
     }
@@ -77,7 +78,7 @@ function closeMenu() {
     if (navMenu) navMenu.classList.remove('active');
 }
 
-// Render Functions
+// Render PPTs with Delete Button
 function renderPPTs(filter = 'all') {
     const container = document.getElementById("ppt-container");
     if (!container) return;
@@ -89,15 +90,19 @@ function renderPPTs(filter = 'all') {
             <h3>${item.title}</h3>
             <p>${item.desc}</p>
             <div class="card-actions">
-                <a href="${item.link}" class="btn-download"><i class="fa-solid fa-file-powerpoint"></i> داگرتن</a>
+                <a href="${item.link}" class="btn-download" ${item.link !== '#' ? 'download' : ''}><i class="fa-solid fa-file-powerpoint"></i> داگرتن</a>
                 <button class="btn-edit admin-only" onclick="editPPT(${item.id})">
                     <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
+                </button>
+                <button class="btn-delete admin-only" onclick="deletePPT(${item.id})" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                    <i class="fa-solid fa-trash"></i> سڕینەوە
                 </button>
             </div>
         </div>
     `).join('');
 }
 
+// Render Ministerials with Delete Button
 function renderMinisterials() {
     const container = document.getElementById("ministerial-container");
     if (!container) return;
@@ -105,14 +110,18 @@ function renderMinisterials() {
         <div class="pdf-card">
             <div class="pdf-icon"><i class="fa-solid fa-file-pdf"></i></div>
             <h3>${item.title}</h3>
-            <a href="${item.link}" class="pdf-link"><i class="fa-solid fa-download"></i> داگرتنا PDF</a>
+            <a href="${item.link}" class="pdf-link" ${item.link !== '#' ? 'download' : ''}><i class="fa-solid fa-download"></i> داگرتنا PDF</a>
             <button class="btn-edit admin-only" onclick="editMinisterial(${item.id})">
                 <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
+            </button>
+            <button class="btn-delete admin-only" onclick="deleteMinisterial(${item.id})" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                <i class="fa-solid fa-trash"></i> سڕینەوە
             </button>
         </div>
     `).join('');
 }
 
+// Render Quizzes with Delete Button
 function renderQuizzes() {
     const container = document.getElementById("quiz-container");
     if (!container) return;
@@ -125,9 +134,14 @@ function renderQuizzes() {
                 `).join('')}
             </div>
             <div class="quiz-feedback" id="feedback-${q.id}" style="margin-top: 1rem; font-weight: bold;"></div>
-            <button class="btn-edit admin-only" onclick="editQuiz(${q.id})" style="margin-top: 0.5rem;">
-                <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
-            </button>
+            <div style="margin-top: 0.5rem;">
+                <button class="btn-edit admin-only" onclick="editQuiz(${q.id})">
+                    <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
+                </button>
+                <button class="btn-delete admin-only" onclick="deleteQuiz(${q.id})" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                    <i class="fa-solid fa-trash"></i> سڕینەوە
+                </button>
+            </div>
         </div>
     `).join('');
 }
@@ -188,6 +202,31 @@ function editQuiz(id) {
     if (newQuestion) { q.question = newQuestion; renderQuizzes(); }
 }
 
+// Delete Functions
+function deletePPT(id) {
+    if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم وانەیەیە؟")) {
+        ppts = ppts.filter(item => item.id !== id);
+        renderPPTs();
+        alert("وانە بە سەرکەوتوویی سڕایەوە!");
+    }
+}
+
+function deleteMinisterial(id) {
+    if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارە وەزارییە؟")) {
+        ministerials = ministerials.filter(item => item.id !== id);
+        renderMinisterials();
+        alert("پرسیاری وەزاری بە سەرکەوتوویی سڕایەوە!");
+    }
+}
+
+function deleteQuiz(id) {
+    if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارەی کویز؟")) {
+        quizzes = quizzes.filter(item => item.id !== id);
+        renderQuizzes();
+        alert("پرسیاری کویز بە سەرکەوتوویی سڕایەوە!");
+    }
+}
+
 function filterPPT(cls) {
     document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) {
@@ -196,10 +235,81 @@ function filterPPT(cls) {
     renderPPTs(cls);
 }
 
+// Handle Feedback Submission & Saving
+function submitFeedback(event) {
+    event.preventDefault();
+    
+    const rating = document.querySelector('input[name="rating"]:checked').value;
+    const nameInput = document.getElementById("user-name").value.trim();
+    const role = document.getElementById("user-role").value;
+    const message = document.getElementById("user-message").value.trim();
+    
+    const feedbackObj = {
+        id: Date.now(),
+        name: nameInput !== "" ? nameInput : "سەردانیکەرێ نەناس",
+        role: role,
+        rating: rating,
+        message: message,
+        date: new Date().toLocaleDateString('ku-IQ')
+    };
+
+    // وەرگرتنا تێبینیێن کەڤن ژ LocalStorage
+    let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
+    feedbacks.unshift(feedbackObj); // زێدەکرنا تێبینیا نوو ل سەرێ لیستی
+    localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
+
+    // نیشادانا پەیاما سەرکەفتنێ
+    const successBox = document.getElementById("feedback-success");
+    if (successBox) {
+        successBox.style.display = "block";
+        setTimeout(() => { successBox.style.display = "none"; }, 4000);
+    }
+
+    document.getElementById("feedback-form").reset();
+    renderFeedbacks();
+}
+
+// Render Feedbacks for Admin
+function renderFeedbacks() {
+    const container = document.getElementById("admin-feedbacks-container");
+    if (!container) return;
+
+    let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
+
+    if (feedbacks.length === 0) {
+        container.innerHTML = `<p style="color: #666; font-style: italic;">هێشتا چ تێبینی نەهاتینە نڤێسین.</p>`;
+        return;
+    }
+
+    container.innerHTML = feedbacks.map(item => `
+        <div class="feedback-item">
+            <h4>${item.name} (${item.role}) - <span style="color: #f59e0b;">⭐ ${item.rating}/5</span></h4>
+            <p>${item.message}</p>
+            <div class="feedback-meta">
+                <span>بەروار: ${item.date}</span>
+                <button class="btn-delete-feedback" onclick="deleteFeedback(${item.id})"><i class="fa-solid fa-trash"></i> سڕینەوە</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Delete Feedback
+function deleteFeedback(id) {
+    if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم تێبینییە؟")) {
+        let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
+        feedbacks = feedbacks.filter(item => item.id !== id);
+        localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
+        renderFeedbacks();
+    }
+}
+
+// Search PPTs & Initialization
 document.addEventListener("DOMContentLoaded", () => {
     renderPPTs();
     renderMinisterials();
     renderQuizzes();
+    loadNotification();
+    renderFeedbacks();
 
     const searchInput = document.getElementById("ppt-search");
     if (searchInput) {
@@ -218,6 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <button class="btn-edit admin-only" onclick="editPPT(${item.id})">
                                 <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
                             </button>
+                            <button class="btn-delete admin-only" onclick="deletePPT(${item.id})" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                                <i class="fa-solid fa-trash"></i> سڕینەوە
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -225,7 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-// بارکرنا ئاگەهداریێ ژ بیرگەها وێبسایتی
+
+// Load and Edit Notification
 function loadNotification() {
     const savedText = localStorage.getItem('site_notification');
     if (savedText) {
@@ -233,7 +347,6 @@ function loadNotification() {
     }
 }
 
-// گۆڕینا ئاگەهداریێ ژلایێ ئەدمینی ڤە
 function editNotification() {
     const currentText = document.getElementById('notice-text').innerText;
     const newText = prompt("ئاگەهداریا نوی بنڤێسە:", currentText);
@@ -245,17 +358,20 @@ function editNotification() {
     }
 }
 
-// د دەمێ ڤەکرنا پەیجی دا bang بکە
-document.addEventListener("DOMContentLoaded", () => {
-    loadNotification();
-});
-// Add New PPT Lesson
+// Add New PPT Lesson from Computer
 function addNewPPT(event) {
     event.preventDefault();
     const title = document.getElementById("ppt-title-input").value;
     const cls = document.getElementById("ppt-class-input").value;
     const desc = document.getElementById("ppt-desc-input").value;
-    const link = document.getElementById("ppt-link-input").value;
+    const fileInput = document.getElementById("ppt-file-input");
+
+    if (fileInput.files.length === 0) {
+        alert("تکایە فایلا پاوەرپۆینتێ هەڵبژێرە!");
+        return;
+    }
+
+    const fileURL = URL.createObjectURL(fileInput.files[0]);
 
     const newObj = {
         id: Date.now(),
@@ -263,25 +379,32 @@ function addNewPPT(event) {
         class: cls,
         tag: `پۆلا ${cls}ی وێژەیی`,
         desc: desc,
-        link: link
+        link: fileURL
     };
 
-    ppts.unshift(newObj); // زێدەکرن بۆ سەرەتایا لیستی
+    ppts.unshift(newObj);
     renderPPTs();
     event.target.reset();
-    alert("وانە ب سەرکەفتن هاتە زێدەکرن!");
+    alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن!");
 }
 
-// Add New Ministerial PDF
+// Add New Ministerial PDF from Computer
 function addNewMinisterial(event) {
     event.preventDefault();
     const title = document.getElementById("pdf-title-input").value;
-    const link = document.getElementById("pdf-link-input").value;
+    const fileInput = document.getElementById("pdf-file-input");
+
+    if (fileInput.files.length === 0) {
+        alert("تکایە فایلا PDF هەڵبژێرە!");
+        return;
+    }
+
+    const fileURL = URL.createObjectURL(fileInput.files[0]);
 
     const newObj = {
         id: Date.now(),
         title: title,
-        link: link
+        link: fileURL
     };
 
     ministerials.unshift(newObj);
@@ -303,7 +426,7 @@ function addNewQuiz(event) {
         id: Date.now(),
         question: q,
         options: [opt1, opt2, opt3, opt4],
-        correctIndex: 0 // بەرسڤا ئێکێ (opt1) وەک ڕاست دهێتە تۆمارکرن
+        correctIndex: 0
     };
 
     quizzes.push(newObj);

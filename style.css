@@ -806,3 +806,39 @@ body.is-admin .admin-only {
 .btn-add:hover {
     background-color: #059669;
 }
+.feedback-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.feedback-item h4 {
+    margin: 0 0 5px 0;
+    color: #1e293b;
+    font-size: 1rem;
+}
+.feedback-item p {
+    margin: 5px 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+.feedback-item .feedback-meta {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    border-top: 1px solid #edf2f7;
+    padding-top: 5px;
+}
+.btn-delete-feedback {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
