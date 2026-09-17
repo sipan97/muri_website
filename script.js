@@ -1,46 +1,66 @@
+// ==================== JSONbin.io Cloud Configuration ====================
+const BIN_ID = "6aabd7faac6210605ad8342e";
+const API_KEY = "$2a$10$Z.UkubjeeM.bv9zKPok4ueiHjAMVh4DEiVn.nfqC63nfJpAwpH68e";
+
 let isAdmin = false;
 
-// وەرگرتنا داتایێن پاوەرپۆینت ژ LocalStorage یان داتایێن بنەڕەتی
-let ppts = JSON.parse(localStorage.getItem('site_ppts')) || [
-    { id: 1, title: "سەرەتایەک د ئابووری دا", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سەرەتایەک د ئابووری دا.", link: "#" },
-    { id: 2, title: "دیاردەیا هەناردەکرن و هاوردەکرنێ", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ دیاردەیا هەناردەکرن و هاوردەکرنێ.", link: "#" },
-    { id: 3, title: "ململانێیا بازاری و بەرهەم", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ ململانێیا بازاری و بەرهەم.", link: "#" },
-    { id: 4, title: "سیستەمێن دارایی د جیهانێ دا", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیستەمێن دارایی د جیهانێ دا.", link: "#" },
-    { id: 5, title: "داهاتی نەەتەوەیی و گەشەکرن", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ داهاتی نەەتەوەیی و گەشەکرن.", link: "#" },
-    { id: 6, title: "سیاستەتا نەقدی و بەنکا ناوەندی", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیاستەتا نەقدی و بەنکا ناوەندی.", link: "#" }
-];
+// Global Data Arrays (دەستپێکی بە خاڵی خاڵی تا کاتی هێنانی داتاکان لە هەورەوە)
+let ppts = [];
+let ministerials = [];
+let quizzes = [];
+let feedbacks = [];
+let siteNotification = "تکایە تێبینی بکە کو ئاگەهداری لێرە دیار دبن.";
 
-// وەرگرتنا پرسیارێن وەزاری ژ LocalStorage یان داتایێن بنەڕەتی
-let ministerials = JSON.parse(localStorage.getItem('site_ministerials')) || [
-    { id: 1, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" },
-    { id: 2, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ۲)", link: "#" },
-    { id: 3, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" }
-];
+// 1. هێنانی داتاکان لە هەور (Cloud Database)
+async function loadDataFromCloud() {
+    try {
+        let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: { "X-Master-Key": API_KEY }
+        });
+        let data = await response.json();
+        let record = data.record || {};
 
-let quizzes = [
-    {
-        id: 1,
-        question: "چەمکێ ئابووری ب تەمامی بریتییە ژ چ؟",
-        options: [
-            "زانستا ڕێکخستن و بەرێوەبرتنا سەرچاوەیان",
-            "تەنێ کۆمکرنا پەڕەیی د بەنکێ دا",
-            "بازرگانیا دەرەکی ب بێ پلاندانان",
-            "کڕینا کەلوپەلان ژ بازارێ ب تەنێ"
-        ],
-        correctIndex: 0
-    },
-    {
-        id: 2,
-        question: "دەسەڵاتا دەرکرنا دراڤی (پارە)ی ل دەست خۆدیێ چ لایەنەکییە?",
-        options: [
-            "بەنکێن بازرگانی یێن تایبەت",
-            "بەنکا ناوەندی یا دەولەتێ",
-            "وەزارەتا بازرگانی",
-            "کومپانیێن مەزن یێن بەرهەمهێنانی"
-        ],
-        correctIndex: 1
+        ppts = record.ppts || [];
+        ministerials = record.ministerials || [];
+        quizzes = record.quizzes || [];
+        feedbacks = record.feedbacks || [];
+        siteNotification = record.notification || siteNotification;
+
+        // نوێکردنەوەی نیشاندانی ناو ماڵپەڕەکە پاش هاتنی داتاکان
+        renderPPTs();
+        renderMinisterials();
+        renderQuizzes();
+        renderFeedbacks();
+        loadNotification();
+    } catch (error) {
+        console.error("Error loading data from cloud:", error);
     }
-];
+}
+
+// 2. پاشەکەوتکردنی گشتی لە هەوردا
+async function saveDataToCloud() {
+    try {
+        let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Master-Key": API_KEY
+            },
+            body: JSON.stringify({
+                ppts: ppts,
+                ministerials: ministerials,
+                quizzes: quizzes,
+                feedbacks: feedbacks,
+                notification: siteNotification
+            })
+        });
+        if (!response.ok) {
+            console.error("Failed to save to cloud");
+        }
+    } catch (error) {
+        console.error("Error saving data to cloud:", error);
+    }
+}
 
 // Toggle Admin Mode
 function toggleAdmin() {
@@ -51,10 +71,10 @@ function toggleAdmin() {
         const btn = document.getElementById("admin-toggle-btn");
         
         if (isAdmin) {
-            btn.innerHTML = `<i class="fa-solid fa-lock"></i> دەركەفتن`;
+            if (btn) btn.innerHTML = `<i class="fa-solid fa-lock"></i> دەركەفتن`;
             alert("تو دەرباز بوی وەک ئەدمین!");
         } else {
-            btn.innerHTML = `<i class="fa-solid fa-user-gear"></i> ئەدمین`;
+            if (btn) btn.innerHTML = `<i class="fa-solid fa-user-gear"></i> ئەدمین`;
             alert("تو دەركەفتی ژ حالەتێ ئەدمینی.");
         }
         
@@ -80,7 +100,7 @@ function closeMenu() {
     if (navMenu) navMenu.classList.remove('active');
 }
 
-// Render PPTs with View-Only button (No Download for PowerPoint)
+// Render PPTs
 function renderPPTs(filter = 'all') {
     const container = document.getElementById("ppt-container");
     if (!container) return;
@@ -104,7 +124,7 @@ function renderPPTs(filter = 'all') {
     `).join('');
 }
 
-// Render Ministerials with Delete Button
+// Render Ministerials
 function renderMinisterials() {
     const container = document.getElementById("ministerial-container");
     if (!container) return;
@@ -112,7 +132,7 @@ function renderMinisterials() {
         <div class="pdf-card">
             <div class="pdf-icon"><i class="fa-solid fa-file-pdf"></i></div>
             <h3>${item.title}</h3>
-            <a href="${item.link}" class="pdf-link" ${item.link !== '#' ? 'download' : ''}><i class="fa-solid fa-download"></i> داگرتنا PDF</a>
+            <a href="${item.link}" class="pdf-link" target="_blank"><i class="fa-solid fa-download"></i> ڤەکرن / داگرتن</a>
             <button class="btn-edit admin-only" onclick="editMinisterial(${item.id})">
                 <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
             </button>
@@ -123,7 +143,7 @@ function renderMinisterials() {
     `).join('');
 }
 
-// Render Quizzes with Delete Button
+// Render Quizzes
 function renderQuizzes() {
     const container = document.getElementById("quiz-container");
     if (!container) return;
@@ -161,9 +181,11 @@ function selectOption(element, quizId, selectedIdx) {
     const feedbackBox = document.getElementById(`feedback-${quizId}`);
 
     const correctOpt = options[quiz.correctIndex];
-    correctOpt.style.border = "2px solid #10b981";
-    correctOpt.style.color = "#10b981";
-    correctOpt.style.fontWeight = "bold";
+    if (correctOpt) {
+        correctOpt.style.border = "2px solid #10b981";
+        correctOpt.style.color = "#10b981";
+        correctOpt.style.fontWeight = "bold";
+    }
 
     if (selectedIdx === quiz.correctIndex) {
         if (feedbackBox) {
@@ -189,7 +211,7 @@ function editPPT(id) {
     const newTitle = prompt("ناڤێ نوی بنڤێسە:", item.title);
     if (newTitle) { 
         item.title = newTitle; 
-        localStorage.setItem('site_ppts', JSON.stringify(ppts));
+        saveDataToCloud();
         renderPPTs(); 
     }
 }
@@ -200,7 +222,7 @@ function editMinisterial(id) {
     const newTitle = prompt("ناڤێ فایلا وەزاری بگوهۆڕە:", item.title);
     if (newTitle) { 
         item.title = newTitle; 
-        localStorage.setItem('site_ministerials', JSON.stringify(ministerials));
+        saveDataToCloud();
         renderMinisterials(); 
     }
 }
@@ -209,14 +231,18 @@ function editQuiz(id) {
     const q = quizzes.find(item => item.id === id);
     if (!q) return;
     const newQuestion = prompt("پرسیارا نوی بنڤێسە:", q.question);
-    if (newQuestion) { q.question = newQuestion; renderQuizzes(); }
+    if (newQuestion) { 
+        q.question = newQuestion; 
+        saveDataToCloud();
+        renderQuizzes(); 
+    }
 }
 
 // Delete Functions
 function deletePPT(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم وانەیەیە؟")) {
         ppts = ppts.filter(item => item.id !== id);
-        localStorage.setItem('site_ppts', JSON.stringify(ppts));
+        saveDataToCloud();
         renderPPTs();
         alert("وانە بە سەرکەوتوویی سڕایەوە!");
     }
@@ -225,7 +251,7 @@ function deletePPT(id) {
 function deleteMinisterial(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارە وەزارییە؟")) {
         ministerials = ministerials.filter(item => item.id !== id);
-        localStorage.setItem('site_ministerials', JSON.stringify(ministerials));
+        saveDataToCloud();
         renderMinisterials();
         alert("پرسیاری وەزاری بە سەرکەوتوویی سڕایەوە!");
     }
@@ -234,6 +260,7 @@ function deleteMinisterial(id) {
 function deleteQuiz(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارەی کویز؟")) {
         quizzes = quizzes.filter(item => item.id !== id);
+        saveDataToCloud();
         renderQuizzes();
         alert("پرسیاری کویز بە سەرکەوتوویی سڕایەوە!");
     }
@@ -251,7 +278,8 @@ function filterPPT(cls) {
 function submitFeedback(event) {
     event.preventDefault();
     
-    const rating = document.querySelector('input[name="rating"]:checked').value;
+    const ratingEl = document.querySelector('input[name="rating"]:checked');
+    const rating = ratingEl ? ratingEl.value : "5";
     const nameInput = document.getElementById("user-name").value.trim();
     const role = document.getElementById("user-role").value;
     const message = document.getElementById("user-message").value.trim();
@@ -265,9 +293,8 @@ function submitFeedback(event) {
         date: new Date().toLocaleDateString('ku-IQ')
     };
 
-    let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
     feedbacks.unshift(feedbackObj);
-    localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
+    saveDataToCloud();
 
     const successBox = document.getElementById("feedback-success");
     if (successBox) {
@@ -275,7 +302,8 @@ function submitFeedback(event) {
         setTimeout(() => { successBox.style.display = "none"; }, 4000);
     }
 
-    document.getElementById("feedback-form").reset();
+    const form = document.getElementById("feedback-form");
+    if (form) form.reset();
     renderFeedbacks();
 }
 
@@ -283,8 +311,6 @@ function submitFeedback(event) {
 function renderFeedbacks() {
     const container = document.getElementById("admin-feedbacks-container");
     if (!container) return;
-
-    let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
 
     if (feedbacks.length === 0) {
         container.innerHTML = `<p style="color: #666; font-style: italic;">هێشتا چ تێبینی نەهاتینە نڤێسین.</p>`;
@@ -306,20 +332,15 @@ function renderFeedbacks() {
 // Delete Feedback
 function deleteFeedback(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم تێبینییە؟")) {
-        let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
         feedbacks = feedbacks.filter(item => item.id !== id);
-        localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
+        saveDataToCloud();
         renderFeedbacks();
     }
 }
 
-// Search PPTs & Initialization
+// Initialization on Page Load
 document.addEventListener("DOMContentLoaded", () => {
-    renderPPTs();
-    renderMinisterials();
-    renderQuizzes();
-    loadNotification();
-    renderFeedbacks();
+    loadDataFromCloud(); // هێنانی داتاکان لە هەور
 
     const searchInput = document.getElementById("ppt-search");
     if (searchInput) {
@@ -334,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <h3>${item.title}</h3>
                         <p>${item.desc}</p>
                         <div class="card-actions">
-                            <a href="${item.link}" class="btn-download"><i class="fa-solid fa-file-powerpoint"></i> داگرتن</a>
+                            <a href="${item.link}" target="_blank" class="btn-download"><i class="fa-solid fa-file-powerpoint"></i> ڤەکرن</a>
                             <button class="btn-edit admin-only" onclick="editPPT(${item.id})">
                                 <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
                             </button>
@@ -351,24 +372,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Load and Edit Notification
 function loadNotification() {
-    const savedText = localStorage.getItem('site_notification');
-    if (savedText) {
-        document.getElementById('notice-text').innerText = savedText;
+    const noticeEl = document.getElementById('notice-text');
+    if (noticeEl) {
+        noticeEl.innerText = siteNotification;
     }
 }
 
 function editNotification() {
-    const currentText = document.getElementById('notice-text').innerText;
+    const currentText = document.getElementById('notice-text') ? document.getElementById('notice-text').innerText : siteNotification;
     const newText = prompt("ئاگەهداریا نوی بنڤێسە:", currentText);
     
     if (newText !== null && newText.trim() !== "") {
-        document.getElementById('notice-text').innerText = newText;
-        localStorage.setItem('site_notification', newText);
+        siteNotification = newText;
+        loadNotification();
+        saveDataToCloud();
         alert("ئاگەهداری ب سەرکەفتن هاتە گۆڕین!");
     }
 }
 
-// Add New PPT Lesson from Computer
+// Add New PPT Lesson
 function addNewPPT(event) {
     event.preventDefault();
     const title = document.getElementById("ppt-title-input").value;
@@ -393,13 +415,13 @@ function addNewPPT(event) {
     };
 
     ppts.unshift(newObj);
-    localStorage.setItem('site_ppts', JSON.stringify(ppts)); // پاشەکەوتکردن لای LocalStorage
+    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
     renderPPTs();
     event.target.reset();
-    alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن!");
+    alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن بۆ هەور!");
 }
 
-// Add New Ministerial PDF from Computer
+// Add New Ministerial PDF
 function addNewMinisterial(event) {
     event.preventDefault();
     const title = document.getElementById("pdf-title-input").value;
@@ -419,10 +441,10 @@ function addNewMinisterial(event) {
     };
 
     ministerials.unshift(newObj);
-    localStorage.setItem('site_ministerials', JSON.stringify(ministerials)); // پاشەکەوتکردن لای LocalStorage
+    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
     renderMinisterials();
     event.target.reset();
-    alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن!");
+    alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن بۆ هەور!");
 }
 
 // Add New Quiz Question
@@ -442,7 +464,8 @@ function addNewQuiz(event) {
     };
 
     quizzes.push(newObj);
+    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
     renderQuizzes();
     event.target.reset();
-    alert("پرسیارا کویزی ب سەرکەفتن هاتە زێدەکرن!");
+    alert("پرسیارا کویزی ب سەرکەفتیانە هاتە زێدەکرن بۆ هەور!");
 }
