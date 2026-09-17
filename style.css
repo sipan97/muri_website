@@ -842,3 +842,17 @@ body.is-admin .admin-only {
     cursor: pointer;
     font-size: 0.8rem;
 }
+/* Admin Controls */
+.admin-only {
+    display: none !important;
+}
+
+body.is-admin .admin-only {
+    display: inline-block !important;
+}
+
+/* تایبەت بەو بەشانەی کە blockـن و دەبێت ببنە block کاتی ئەدمین */
+body.is-admin div.admin-only,
+body.is-admin section.admin-only {
+    display: block !important;
+}

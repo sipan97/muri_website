@@ -1,6 +1,7 @@
 let isAdmin = false;
 
-let ppts = [
+// وەرگرتنا داتایێن پاوەرپۆینت ژ LocalStorage یان داتایێن بنەڕەتی
+let ppts = JSON.parse(localStorage.getItem('site_ppts')) || [
     { id: 1, title: "سەرەتایەک د ئابووری دا", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سەرەتایەک د ئابووری دا.", link: "#" },
     { id: 2, title: "دیاردەیا هەناردەکرن و هاوردەکرنێ", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ دیاردەیا هەناردەکرن و هاوردەکرنێ.", link: "#" },
     { id: 3, title: "ململانێیا بازاری و بەرهەم", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ ململانێیا بازاری و بەرهەم.", link: "#" },
@@ -9,7 +10,8 @@ let ppts = [
     { id: 6, title: "سیاستەتا نەقدی و بەنکا ناوەندی", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیاستەتا نەقدی و بەنکا ناوەندی.", link: "#" }
 ];
 
-let ministerials = [
+// وەرگرتنا پرسیارێن وەزاری ژ LocalStorage یان داتایێن بنەڕەتی
+let ministerials = JSON.parse(localStorage.getItem('site_ministerials')) || [
     { id: 1, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" },
     { id: 2, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ۲)", link: "#" },
     { id: 3, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" }
@@ -185,14 +187,22 @@ function editPPT(id) {
     const item = ppts.find(p => p.id === id);
     if (!item) return;
     const newTitle = prompt("ناڤێ نوی بنڤێسە:", item.title);
-    if (newTitle) { item.title = newTitle; renderPPTs(); }
+    if (newTitle) { 
+        item.title = newTitle; 
+        localStorage.setItem('site_ppts', JSON.stringify(ppts));
+        renderPPTs(); 
+    }
 }
 
 function editMinisterial(id) {
     const item = ministerials.find(m => m.id === id);
     if (!item) return;
     const newTitle = prompt("ناڤێ فایلا وەزاری بگوهۆڕە:", item.title);
-    if (newTitle) { item.title = newTitle; renderMinisterials(); }
+    if (newTitle) { 
+        item.title = newTitle; 
+        localStorage.setItem('site_ministerials', JSON.stringify(ministerials));
+        renderMinisterials(); 
+    }
 }
 
 function editQuiz(id) {
@@ -206,6 +216,7 @@ function editQuiz(id) {
 function deletePPT(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم وانەیەیە؟")) {
         ppts = ppts.filter(item => item.id !== id);
+        localStorage.setItem('site_ppts', JSON.stringify(ppts));
         renderPPTs();
         alert("وانە بە سەرکەوتوویی سڕایەوە!");
     }
@@ -214,6 +225,7 @@ function deletePPT(id) {
 function deleteMinisterial(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارە وەزارییە؟")) {
         ministerials = ministerials.filter(item => item.id !== id);
+        localStorage.setItem('site_ministerials', JSON.stringify(ministerials));
         renderMinisterials();
         alert("پرسیاری وەزاری بە سەرکەوتوویی سڕایەوە!");
     }
@@ -253,12 +265,10 @@ function submitFeedback(event) {
         date: new Date().toLocaleDateString('ku-IQ')
     };
 
-    // وەرگرتنا تێبینیێن کەڤن ژ LocalStorage
     let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
-    feedbacks.unshift(feedbackObj); // زێدەکرنا تێبینیا نوو ل سەرێ لیستی
+    feedbacks.unshift(feedbackObj);
     localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
 
-    // نیشادانا پەیاما سەرکەفتنێ
     const successBox = document.getElementById("feedback-success");
     if (successBox) {
         successBox.style.display = "block";
@@ -383,6 +393,7 @@ function addNewPPT(event) {
     };
 
     ppts.unshift(newObj);
+    localStorage.setItem('site_ppts', JSON.stringify(ppts)); // پاشەکەوتکردن لای LocalStorage
     renderPPTs();
     event.target.reset();
     alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن!");
@@ -408,6 +419,7 @@ function addNewMinisterial(event) {
     };
 
     ministerials.unshift(newObj);
+    localStorage.setItem('site_ministerials', JSON.stringify(ministerials)); // پاشەکەوتکردن لای LocalStorage
     renderMinisterials();
     event.target.reset();
     alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن!");
