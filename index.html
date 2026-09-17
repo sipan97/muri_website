@@ -4,213 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muri | موری - گەوهەرێ زانیاریان</title>
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS File -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Header & Navigation -->
-    <header>
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="logo-area">
-            <h1>Muri</h1>
-            <p>موری | گەوهەرێ زانیاریان</p>
+            <span class="logo-title">Muri</span>
+            <span class="logo-sub">موری | گەوهەرێ زانیاریان</span>
         </div>
-        <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
-        <nav id="nav-menu">
-            <ul>
-                <li><a href="#home" onclick="closeMenu()">سەرەکی</a></li>
-                <li><a href="#ppts" onclick="closeMenu()">پاوەرپۆینت</a></li>
-                <li><a href="#ministerial" onclick="closeMenu()">پرسیارێن وەزاری</a></li>
-                <li><a href="#quizzes" onclick="closeMenu()">کویز</a></li>
-                <li><a href="#about" onclick="closeMenu()">دەربارەی من</a></li>
-                <li><button id="admin-toggle-btn" onclick="toggleAdmin()" class="admin-btn"><i class="fa-solid fa-user-gear"></i> ئەدمین</button></li>
-            </ul>
-        </nav>
-    </header>
+
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="#home" onclick="closeMenu()">سەرەکی</a></li>
+            <li><a href="#ppt-section" onclick="closeMenu()">پاوەرپۆینت</a></li>
+            <li><a href="#ministerial-section" onclick="closeMenu()">پرسیارێن وەزاری</a></li>
+            <li><a href="#quiz-section" onclick="closeMenu()">کویز</a></li>
+            <li><a href="#about-section" onclick="closeMenu()">دەربارەی من</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="btn-admin" id="admin-toggle-btn" onclick="toggleAdmin()">
+                <i class="fa-solid fa-user-gear"></i> ئەدمین
+            </button>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
-        <h2>بخێرهاتی بۆ مالپەرێ | Muri</h2>
+    <header class="hero" id="home">
+        <h1>بخێرهاتی بو مالپەرێ | Muri</h1>
         <p>پاوەرپۆینت، پرسیارێن وەزاری و کویزێن ئەزموونکرنێ بۆ هەمی پۆلان ب ساناهی و بێ بەرامبەر داگرە.</p>
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="ppt-search" placeholder="ل سەر بابەت یان پۆلێ بگەرە...">
         </div>
-    </section>
+    </header>
 
-    <!-- Admin Panel (Visible only in Admin mode) -->
-    <section class="admin-panel admin-only-section">
-        <div class="admin-panel-header">
-            <h3><i class="fa-solid fa-shield-halved"></i> زێدەکرنا ناوەرۆکا نوی (تەنێ بۆ ئەدمینی)</h3>
-        </div>
+    <!-- Main Container -->
+    <main class="container">
         
-        <div class="admin-forms-grid">
-            <!-- Add PowerPoint Form -->
-            <form class="admin-form" onsubmit="addNewPPT(event)">
-                <h4><i class="fa-solid fa-file-powerpoint"></i> زێدەکرنا وانە / پاوەرپۆینت</h4>
-                <div class="form-group">
-                    <label>سەردێری وانەیێ</label>
-                    <input type="text" id="ppt-title-input" placeholder="رامان و پێناسەیێن داهاتێ نەتەوەیی" required>
-                </div>
-                <div class="form-group">
-                    <label>پۆل</label>
-                    <select id="ppt-class-input">
-                        <option value="10">پۆلا 10</option>
-                        <option value="11">پۆلا 11</option>
-                        <option value="12" selected>پۆلا 12</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>کورتەیەک لەبارەی وانەیێ</label>
-                    <input type="text" id="ppt-desc-input" placeholder="ئابوورناسێ بریتنای..." required>
-                </div>
-                <div class="form-group">
-                    <label>رێڕەوی فایلی پاوەرپۆینت (بۆ نموونە: files/پۆلا ١٢/وانا ١.pptx)</label>
-                    <input type="text" id="ppt-file-input" placeholder="files/پۆلا ١٢/وانا ١.pptx" required>
-                </div>
-                <button type="submit" class="btn-submit">+ زێدەکرن</button>
-            </form>
+        <!-- PPT Section -->
+        <section id="ppt-section">
+            <h2 class="section-title">فایلێن پاوەرپۆینت (PPT)</h2>
+            <div class="filter-pills">
+                <button class="pill active" onclick="filterPPT('all')">هەمی</button>
+                <button class="pill" onclick="filterPPT('10')">پۆلا 10</button>
+                <button class="pill" onclick="filterPPT('11')">پۆلا 11</button>
+                <button class="pill" onclick="filterPPT('12')">پۆلا 12</button>
+            </div>
+            <div class="grid-cards" id="ppt-container"></div>
+        </section>
 
-            <!-- Add Ministerial PDF Form -->
-            <form class="admin-form" onsubmit="addNewMinisterial(event)">
-                <h4><i class="fa-solid fa-file-pdf"></i> زێدەکرنا پرسیارێن وەزاری</h4>
-                <div class="form-group">
-                    <label>سەردێری فایلی</label>
-                    <input type="text" id="pdf-title-input" placeholder="نموونە: پرسیارێن 2024 خولا 1" required>
+        <!-- Ministerial Questions Section -->
+        <section id="ministerial-section" style="margin-top: 3rem;">
+            <h2 class="section-title">پرسیارێن وەزاری (PDF)</h2>
+            <div class="grid-cards" id="ministerial-container"></div>
+        </section>
+       
+        <!-- Quiz Section -->
+        <section id="quiz-section" style="margin-top: 3rem;">
+            <h2 class="section-title">تاقیکرن (کویز)</h2>
+            <div id="quiz-container"></div>
+        </section>
+<!-- Admin Control Panel (Only visible for Admin) -->
+<section class="admin-panel admin-only" id="admin-panel">
+    <h2 class="section-title"><i class="fa-solid fa-plus-circle"></i> زێدەکرنا ناوەرۆکا نوی (تەنێ بۆ ئەدمینی)</h2>
+    <div class="admin-card">
+        
+        <!-- Form 1: Add PPT/Lesson -->
+        <div class="admin-form-box">
+            <h3><i class="fa-solid fa-file-powerpoint"></i> زێدەکرنا وانە / پاوەرپۆینت</h3>
+            <form onsubmit="addNewPPT(event)">
+                <input type="text" id="ppt-title-input" placeholder="ناڤێ بابەت / وانەیێ" required>
+                <select id="ppt-class-input" required>
+                    <option value="10">پۆلا 10</option>
+                    <option value="11">پۆلا 11</option>
+                    <option value="12">پۆلا 12</option>
+                </select>
+                <input type="text" id="ppt-desc-input" placeholder="کورتە ڕوونکردنەوە..." required>
+                
+                <!-- هەڵبژاردنا فایلی پاوەرپۆینت ژ کۆمپیوتەری -->
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <label style="font-size: 0.9rem; color: #555; display: block; margin-bottom: 5px;">فایلا پاوەرپۆینت (PPTX) ژ کۆمپیوتەری هەڵبژێرە:</label>
+                    <input type="file" id="ppt-file-input" accept=".ppt, .pptx" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: #fff;">
                 </div>
-                <div class="form-group">
-                    <label>رێڕەوی فایلی PDF (بۆ نموونە: files/ministerial/2024.pdf)</label>
-                    <input type="text" id="pdf-file-input" placeholder="files/ministerial/2024.pdf" required>
-                </div>
-                <button type="submit" class="btn-submit">+ زێدەکرن</button>
-            </form>
 
-            <!-- Add Quiz Question Form -->
-            <form class="admin-form" onsubmit="addNewQuiz(event)">
-                <h4><i class="fa-solid fa-circle-question"></i> زێدەکرنا پرسیارا کویزی</h4>
-                <div class="form-group">
-                    <label>دەقێ پرسیارێ</label>
-                    <input type="text" id="quiz-q-input" placeholder="دەقێ پرسیارێ بنڤێسە..." required>
-                </div>
-                <div class="form-group">
-                    <label>بەرسڤا 1 (ڕاست)</label>
-                    <input type="text" id="quiz-opt1-input" placeholder="بەرسڤا ڕاست" required>
-                </div>
-                <div class="form-group">
-                    <label>بەرسڤا 2 (شاش)</label>
-                    <input type="text" id="quiz-opt2-input" placeholder="بەرسڤا شاش" required>
-                </div>
-                <div class="form-group">
-                    <label>بەرسڤا 3 (شاش)</label>
-                    <input type="text" id="quiz-opt3-input" placeholder="بەرسڤا شاش" required>
-                </div>
-                <div class="form-group">
-                    <label>بەرسڤا 4 (شاش)</label>
-                    <input type="text" id="quiz-opt4-input" placeholder="بەرسڤا شاش" required>
-                </div>
-                <button type="submit" class="btn-submit">+ زێدەکرن</button>
+                <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> زێدەکرن</button>
             </form>
         </div>
-    </section>
 
-    <!-- PowerPoint Section -->
-    <section id="ppts" class="content-section">
-        <h2><i class="fa-solid fa-file-powerpoint" style="color: #d97706;"></i> فایلێن پاوەرپۆینت (PPT)</h2>
-        <div class="filter-pills">
-            <button class="pill active" onclick="filterPPT('all')">هەمی</button>
-            <button class="pill" onclick="filterPPT('10')">پۆلا 10</button>
-            <button class="pill" onclick="filterPPT('11')">پۆلا 11</button>
-            <button class="pill" onclick="filterPPT('12')">پۆلا 12</button>
-        </div>
-        <div class="cards-grid" id="ppt-container">
-            <!-- Dynamically loaded -->
-        </div>
-    </section>
+        <!-- Form 2: Add Ministerial Question -->
+        <div class="admin-form-box">
+            <h3><i class="fa-solid fa-file-pdf"></i> زێدەکرنا پرسیارێن وەزاری</h3>
+            <form onsubmit="addNewMinisterial(event)">
+                <input type="text" id="pdf-title-input" placeholder="سەردێری فایلی (نموونە: پرسیارێن 2024 خولا 1)" required>
+                
+                <!-- هەڵبژاردنا فایلی PDF ژ کۆمپیوتەری -->
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <label style="font-size: 0.9rem; color: #555; display: block; margin-bottom: 5px;">فایلا PDF ژ کۆمپیوتەری هەڵبژێرە:</label>
+                    <input type="file" id="pdf-file-input" accept=".pdf" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: #fff;">
+                </div>
 
-    <!-- Ministerial Questions Section -->
-    <section id="ministerial" class="content-section">
-        <h2><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> پرسیارێن وەزاری (PDF)</h2>
-        <div class="cards-grid" id="ministerial-container">
-            <!-- Dynamically loaded -->
+                <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> زێدەکرن</button>
+            </form>
         </div>
-    </section>
 
-    <!-- Quizzes Section -->
-    <section id="quizzes" class="content-section">
-        <h2><i class="fa-solid fa-puzzle-piece" style="color: #3b82f6;"></i> تاقیکرن (کویز)</h2>
-        <div class="quiz-grid" id="quiz-container">
-            <!-- Dynamically loaded -->
+        <!-- Form 3: Add Quiz Question -->
+        <div class="admin-form-box">
+            <h3><i class="fa-solid fa-circle-question"></i> زێدەکرنا پرسیارا کویزی</h3>
+            <form onsubmit="addNewQuiz(event)">
+                <input type="text" id="quiz-q-input" placeholder="دەقێ پرسیارێ بنڤێسە..." required>
+                <input type="text" id="quiz-opt1-input" placeholder="بەرسڤا 1 (ڕاست)" required>
+                <input type="text" id="quiz-opt2-input" placeholder="بەرسڤا 2 (شاش)" required>
+                <input type="text" id="quiz-opt3-input" placeholder="بەرسڤا 3 (شاش)" required>
+                <input type="text" id="quiz-opt4-input" placeholder="بەرسڤا 4 (شاش)" required>
+                <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> زێدەکرن</button>
+            </form>
         </div>
-    </section>
 
-    <!-- Notification & Feedback Section -->
-    <section class="info-feedback-section">
+    </div>
+</section>
+
+        <section class="notification-section">
+    <div class="notification-container">
         <div class="notification-box">
-            <h3><i class="fa-solid fa-bullhorn"></i> ئاگەهداری</h3>
-            <p id="notice-text">تکایە تێبینی بکە کو ئاگەهداری لێرە دیار دبن.</p>
-            <button class="btn-edit admin-only" onclick="editNotification()"><i class="fa-solid fa-pen-to-square"></i> دەستکاریکرنا ئاگەهداریێ</button>
+            <div class="notification-header">
+                <i class="fa-solid fa-circle-exclamation notification-icon"></i>
+                <h3 id="notice-title">ئاگەهداری</h3>
+                <button class="btn-edit admin-only" onclick="editNotification()">
+                    <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
+                </button>
+            </div>
+            <div class="notification-body">
+                <p id="notice-text">تکایە تێبینی بکە کو ئاگەهداری لێرە دیار دبن.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Feedback & Rating Section -->
+<section class="feedback-section" id="feedback-section">
+    <div class="feedback-card">
+        <div class="feedback-header">
+            <i class="fa-solid fa-comments feedback-icon"></i>
+            <div>
+                <h3>تێبینی، پێشنیار یان ڕاپۆرتکرنا خەلەتیان</h3>
+                <p>بوچونا تە بۆ مە یا گرنگە! تو دشێی هەڵسەنگاندنا خۆ و هەر تێبینیەکێ بۆ مە بڕێژی.</p>
+            </div>
         </div>
 
-        <div class="feedback-container">
-            <h3><i class="fa-solid fa-comment-dots"></i> تێبینی، پێشنیار یان ڕاپۆرتکرنا خەلەتیان</h3>
-            <p>بوچونا تە بۆ مە یا گرنگە! تو دشێی هەڵسەنگاندنا خۆ و هەر تێبینیەکێ بۆ مە بڕێژی.</p>
-            
-            <form id="feedback-form" onsubmit="submitFeedback(event)">
-                <div class="rating-stars">
-                    <label>هەڵسەنگاندنا تە:</label>
-                    <div class="stars">
-                        <input type="radio" id="star5" name="rating" value="5" checked><label for="star5">⭐</label>
-                        <input type="radio" id="star4" name="rating" value="4"><label for="star4">⭐</label>
-                        <input type="radio" id="star3" name="rating" value="3"><label for="star3">⭐</label>
-                        <input type="radio" id="star2" name="rating" value="2"><label for="star2">⭐</label>
-                        <input type="radio" id="star1" name="rating" value="1"><label for="star1">⭐</label>
+        <form id="feedback-form" onsubmit="submitFeedback(event)">
+            <!-- Star Rating -->
+            <div class="rating-group">
+                <label>هەڵسەنگاندنا تە بۆ مالپەڕی:</label>
+                <div class="stars">
+                    <input type="radio" name="rating" id="star5" value="5" required><label for="star5" title="5 ستێر"><i class="fa-solid fa-star"></i></label>
+                    <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 ستێر"><i class="fa-solid fa-star"></i></label>
+                    <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 ستێر"><i class="fa-solid fa-star"></i></label>
+                    <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 ستێر"><i class="fa-solid fa-star"></i></label>
+                    <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 ستێر"><i class="fa-solid fa-star"></i></label>
+                </div>
+            </div>
+
+            <!-- Input Fields -->
+            <div class="input-group">
+                <input type="text" id="user-name" placeholder="ناڤێ تە (ئارەزوومەندانه)">
+                <select id="user-role">
+                    <option value="قوتابی">ئەز قوتابیمە</option>
+                    <option value="مامۆستا">ئەز مامۆستامە</option>
+                    <option value="سەردانیکەر">سەرەدانکەر</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <textarea id="user-message" rows="4" placeholder="تێبینی، خەلەتی یان پێشنیارا خۆ ل ڤێرە بنڤێسە..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> ڕەوانەکرن
+            </button>
+        </form>
+
+        <div id="feedback-success" class="feedback-success" style="display: none;">
+            <i class="fa-solid fa-circle-check"></i> دەستخۆش! تێبینیا تە ب سەرکەفتن هاتە ڕەوانەکرن.
+        </div>
+    </div>
+    <!-- Admin Feedback / Messages Box -->
+        <div class="admin-form-box" style="grid-column: 1 / -1; margin-top: 2rem; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h3><i class="fa-solid fa-comments"></i> تێبینی و پێشنیارێن هاتنە هنارتن (لایی ئەدمینی)</h3>
+            <div id="admin-feedbacks-container" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                <p style="color: #666; font-style: italic;">هێشتا چ تێبینی نەهاتینە نڤێسین.</p>
+            </div>
+        </div>
+</section>
+
+        <!-- About Section -->
+        <section id="about-section" style="margin-top: 3rem;">
+            <h2 class="section-title">دەربارەی من و مالپەڕی</h2>
+            <div class="about-card">
+                <div class="about-header">
+                    <i class="fa-solid fa-user-graduate about-icon"></i>
+                    <div>
+                        <h3>مامۆستا: سیپان موسى صالح</h3>
+                        <span class="about-subtitle">مامۆستایێ بابەتێ ئابووری ل ئامادەییا بریفکا بەرواری یا تێکەڵ</span>
                     </div>
                 </div>
-                <div class="form-row">
-                    <input type="text" id="user-name" placeholder="ناڤێ تە (ئارەزوومەندانه)">
-                    <select id="user-role">
-                        <option value="قوتابی">ئەز قوتابیمە</option>
-                        <option value="مامۆستا">ئەز مامۆستامە</option>
-                        <option value="سەردانیکەر">سەردانیکەر</option>
-                    </select>
+                <div class="about-body">
+                    <p>
+                        بخێرهاتن بۆ مالپەڕێ (Muri). ئەز <strong>سیپان موسى صالح</strong>، مامۆستایێ بابەتێ ئابووری مە ل قوتابخانا ئامادەییا بریفکا بەرواری یا تێکەڵ. 
+                        ئارمانجا سەرەکی ژ دامەزراندن و دروستکرنا ئەڤی پلاتفۆرمێ ئەکادیمی، پێشکەشکرنا ژێدەرێن زانستی و هاریکاریکرنا پڕۆسەیا پەروەردە و فێرکرنێیە. ئەڤ مالپەڕە هاتیە ئامادەکرن دا کو ببیتە ژێدەرەکێ باوەرپێکری بۆ گەهاندنا زۆرترین مفای بۆ قوتابیان و مامۆستایێن هێژا یێن بابەتێ ئابووری، ب ڕێکا دابینکرنا پێزانین، ملزەمە، فایلێن پاوەرپۆینت، پرسیارێن وەزاری و تاقیکرنێن دەستپێکێ.
+                    </p>
                 </div>
-                <textarea id="user-message" placeholder="تێبینی، خەلەتی یان پێشنیارا خۆ ل ڤێرە بنڤێسە..." required></textarea>
-                <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> ڕەوانەکرن</button>
-                <div id="feedback-success" style="display:none; color: #10b981; margin-top: 10px; font-weight: bold;">تێبینییا تە ب سەرکەفتن هاتە هنارتن!</div>
-            </form>
-        </div>
+            </div>
+        </section>
 
-        <!-- Admin Feedbacks View -->
-        <div class="admin-feedbacks admin-only">
-            <h3><i class="fa-solid fa-inbox"></i> تێبینی و پێشنیارێن هاتنە هنارتن (لایی ئەدمینی)</h3>
-            <div id="admin-feedbacks-container">
-                <!-- Dynamically loaded -->
+    </main>
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="logo-title">Muri</span>
+                <p>موری | گەوهەرێ زانیاریان</p>
+            </div>
+            
+            <div class="footer-contact">
+                <a href="https://wa.me/9647502381587" target="_blank" class="social-btn whatsapp" title="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="viber://chat?number=%2B9647502381587" class="social-btn viber" title="Viber">
+                    <i class="fa-brands fa-viber"></i>
+                </a>
+                <a href="tel:07502381587" class="phone-badge">
+                    <i class="fa-solid fa-phone"></i> 0750 238 1587
+                </a>
             </div>
         </div>
-    </section>
+        
+        <div class="footer-divider"></div>
 
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <h2>دەربارەی من و مالپەڕی</h2>
-        <div class="teacher-card">
-            <div class="teacher-info">
-                <h3>مامۆستا: سیپان موسى صالح</h3>
-                <p>مامۆستایێ بابەتێ ئابووری ل ئامادەییا بریفکا بەرواری یا تێکەڵ</p>
-                <p>بخێرهاتن بۆ مالپەڕێ (Muri). ئەز <strong>سیپان موسى صالح</strong>، مامۆستایێ بابەتێ ئابووری مە ل قوتابخانا ئامادەییا بریفکا بەرواری یا تێکەڵ. ئارمانجا سەرەکی ژ دامەزراندن و دروستکرنا ئەڤی پلاتفۆرمێ ئەکادیمی، پێشکەشکرنا ژێدەرێن زانستی و هاریکاریکرنا پڕۆسەیا پەروەردە و فێرکرنێیە...</p>
-            </div>
+        <div class="footer-bottom">
+            <p>هەمی ماف پاراستینە &copy; 2026 | مالپەڕێ <strong>Muri</strong> - مامۆستا سیپان موسى صالح</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <p><strong>Muri</strong> | موری | گەوهەرێ زانیاریان</p>
-            <p><i class="fa-solid fa-phone"></i> 0750 238 1587</p>
-            <p>هەمی ماف پاراستینە © 2026 | مالپەڕێ <strong>Muri</strong> - مامۆستا سیپان موسى صالح</p>
-        </div>
-    </footer>
-
+    </div>
+</footer>
+    <!-- JS File -->
     <script src="script.js"></script>
 </body>
 </html>
