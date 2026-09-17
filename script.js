@@ -1,6 +1,7 @@
 let isAdmin = false;
 
-let ppts = [
+// 1. ئینانە دەریا داتایان ژ LocalStorage ئەگەر هەبن، ئەگەر نەبن با دەستپێکی بن
+let ppts = JSON.parse(localStorage.getItem('saved_ppts')) || [
     { id: 1, title: "سەرەتایەک د ئابووری دا", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سەرەتایەک د ئابووری دا.", link: "#" },
     { id: 2, title: "دیاردەیا هەناردەکرن و هاوردەکرنێ", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ دیاردەیا هەناردەکرن و هاوردەکرنێ.", link: "#" },
     { id: 3, title: "ململانێیا بازاری و بەرهەم", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ ململانێیا بازاری و بەرهەم.", link: "#" },
@@ -9,13 +10,13 @@ let ppts = [
     { id: 6, title: "سیاستەتا نەقدی و بەنکا ناوەندی", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیاستەتا نەقدی و بەنکا ناوەندی.", link: "#" }
 ];
 
-let ministerials = [
+let ministerials = JSON.parse(localStorage.getItem('saved_ministerials')) || [
     { id: 1, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" },
     { id: 2, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ۲)", link: "#" },
     { id: 3, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" }
 ];
 
-let quizzes = [
+let quizzes = JSON.parse(localStorage.getItem('saved_quizzes')) || [
     {
         id: 1,
         question: "چەمکێ ئابووری ب تەمامی بریتییە ژ چ؟",
@@ -78,7 +79,7 @@ function closeMenu() {
     if (navMenu) navMenu.classList.remove('active');
 }
 
-// Render PPTs with View-Only button (No Download for PowerPoint)
+// Render PPTs with View-Only button
 function renderPPTs(filter = 'all') {
     const container = document.getElementById("ppt-container");
     if (!container) return;
@@ -102,7 +103,7 @@ function renderPPTs(filter = 'all') {
     `).join('');
 }
 
-// Render Ministerials with Delete Button
+// Render Ministerials
 function renderMinisterials() {
     const container = document.getElementById("ministerial-container");
     if (!container) return;
@@ -110,7 +111,7 @@ function renderMinisterials() {
         <div class="pdf-card">
             <div class="pdf-icon"><i class="fa-solid fa-file-pdf"></i></div>
             <h3>${item.title}</h3>
-            <a href="${item.link}" class="pdf-link" ${item.link !== '#' ? 'download' : ''}><i class="fa-solid fa-download"></i> داگرتنا PDF</a>
+            <a href="${item.link}" class="pdf-link" target="_blank"><i class="fa-solid fa-download"></i> داگرتنا PDF</a>
             <button class="btn-edit admin-only" onclick="editMinisterial(${item.id})">
                 <i class="fa-solid fa-pen-to-square"></i> دەستکاریکرن
             </button>
@@ -121,7 +122,7 @@ function renderMinisterials() {
     `).join('');
 }
 
-// Render Quizzes with Delete Button
+// Render Quizzes
 function renderQuizzes() {
     const container = document.getElementById("quiz-container");
     if (!container) return;
@@ -185,27 +186,40 @@ function editPPT(id) {
     const item = ppts.find(p => p.id === id);
     if (!item) return;
     const newTitle = prompt("ناڤێ نوی بنڤێسە:", item.title);
-    if (newTitle) { item.title = newTitle; renderPPTs(); }
+    if (newTitle) { 
+        item.title = newTitle; 
+        localStorage.setItem('saved_ppts', JSON.stringify(ppts));
+        renderPPTs(); 
+    }
 }
 
 function editMinisterial(id) {
     const item = ministerials.find(m => m.id === id);
     if (!item) return;
     const newTitle = prompt("ناڤێ فایلا وەزاری بگوهۆڕە:", item.title);
-    if (newTitle) { item.title = newTitle; renderMinisterials(); }
+    if (newTitle) { 
+        item.title = newTitle; 
+        localStorage.setItem('saved_ministerials', JSON.stringify(ministerials));
+        renderMinisterials(); 
+    }
 }
 
 function editQuiz(id) {
     const q = quizzes.find(item => item.id === id);
     if (!q) return;
     const newQuestion = prompt("پرسیارا نوی بنڤێسە:", q.question);
-    if (newQuestion) { q.question = newQuestion; renderQuizzes(); }
+    if (newQuestion) { 
+        q.question = newQuestion; 
+        localStorage.setItem('saved_quizzes', JSON.stringify(quizzes));
+        renderQuizzes(); 
+    }
 }
 
 // Delete Functions
 function deletePPT(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم وانەیەیە؟")) {
         ppts = ppts.filter(item => item.id !== id);
+        localStorage.setItem('saved_ppts', JSON.stringify(ppts));
         renderPPTs();
         alert("وانە بە سەرکەوتوویی سڕایەوە!");
     }
@@ -214,6 +228,7 @@ function deletePPT(id) {
 function deleteMinisterial(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارە وەزارییە؟")) {
         ministerials = ministerials.filter(item => item.id !== id);
+        localStorage.setItem('saved_ministerials', JSON.stringify(ministerials));
         renderMinisterials();
         alert("پرسیاری وەزاری بە سەرکەوتوویی سڕایەوە!");
     }
@@ -222,6 +237,7 @@ function deleteMinisterial(id) {
 function deleteQuiz(id) {
     if (confirm("تۆ دڵنیای لە سڕینەوەی ئەم پرسیارەی کویز؟")) {
         quizzes = quizzes.filter(item => item.id !== id);
+        localStorage.setItem('saved_quizzes', JSON.stringify(quizzes));
         renderQuizzes();
         alert("پرسیاری کویز بە سەرکەوتوویی سڕایەوە!");
     }
@@ -253,12 +269,10 @@ function submitFeedback(event) {
         date: new Date().toLocaleDateString('ku-IQ')
     };
 
-    // وەرگرتنا تێبینیێن کەڤن ژ LocalStorage
     let feedbacks = JSON.parse(localStorage.getItem('site_feedbacks')) || [];
-    feedbacks.unshift(feedbackObj); // زێدەکرنا تێبینیا نوو ل سەرێ لیستی
+    feedbacks.unshift(feedbackObj);
     localStorage.setItem('site_feedbacks', JSON.stringify(feedbacks));
 
-    // نیشادانا پەیاما سەرکەفتنێ
     const successBox = document.getElementById("feedback-success");
     if (successBox) {
         successBox.style.display = "block";
@@ -303,7 +317,7 @@ function deleteFeedback(id) {
     }
 }
 
-// Search PPTs & Initialization
+// Initialization
 document.addEventListener("DOMContentLoaded", () => {
     renderPPTs();
     renderMinisterials();
@@ -343,22 +357,24 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadNotification() {
     const savedText = localStorage.getItem('site_notification');
     if (savedText) {
-        document.getElementById('notice-text').innerText = savedText;
+        const noticeEl = document.getElementById('notice-text');
+        if (noticeEl) noticeEl.innerText = savedText;
     }
 }
 
 function editNotification() {
-    const currentText = document.getElementById('notice-text').innerText;
+    const noticeEl = document.getElementById('notice-text');
+    const currentText = noticeEl ? noticeEl.innerText : "";
     const newText = prompt("ئاگەهداریا نوی بنڤێسە:", currentText);
     
     if (newText !== null && newText.trim() !== "") {
-        document.getElementById('notice-text').innerText = newText;
+        if (noticeEl) noticeEl.innerText = newText;
         localStorage.setItem('site_notification', newText);
         alert("ئاگەهداری ب سەرکەفتن هاتە گۆڕین!");
     }
 }
 
-// Add New PPT Lesson from Computer
+// Add New PPT Lesson (With LocalStorage Saving)
 function addNewPPT(event) {
     event.preventDefault();
     const title = document.getElementById("ppt-title-input").value;
@@ -383,12 +399,13 @@ function addNewPPT(event) {
     };
 
     ppts.unshift(newObj);
+    localStorage.setItem('saved_ppts', JSON.stringify(ppts)); // پاشەکەوتکرن ل سەرورەی برۆسەرزێ
     renderPPTs();
     event.target.reset();
     alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن!");
 }
 
-// Add New Ministerial PDF from Computer
+// Add New Ministerial PDF (With LocalStorage Saving)
 function addNewMinisterial(event) {
     event.preventDefault();
     const title = document.getElementById("pdf-title-input").value;
@@ -408,12 +425,13 @@ function addNewMinisterial(event) {
     };
 
     ministerials.unshift(newObj);
+    localStorage.setItem('saved_ministerials', JSON.stringify(ministerials)); // پاشەکەوتکرن
     renderMinisterials();
     event.target.reset();
     alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن!");
 }
 
-// Add New Quiz Question
+// Add New Quiz Question (With LocalStorage Saving)
 function addNewQuiz(event) {
     event.preventDefault();
     const q = document.getElementById("quiz-q-input").value;
@@ -430,6 +448,7 @@ function addNewQuiz(event) {
     };
 
     quizzes.push(newObj);
+    localStorage.setItem('saved_quizzes', JSON.stringify(quizzes)); // پاشەکەوتکرن
     renderQuizzes();
     event.target.reset();
     alert("پرسیارا کویزی ب سەرکەفتن هاتە زێدەکرن!");
