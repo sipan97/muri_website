@@ -4,7 +4,7 @@ const API_KEY = "$2a$10$Z.UkubjeeM.bv9zKPok4ueiHjAMVh4DEiVn.nfqC63nfJpAwpH68e";
 
 let isAdmin = false;
 
-// Global Data Arrays (دەستپێکی بە خاڵی خاڵی تا کاتی هێنانی داتاکان لە هەورەوە)
+// Global Data Arrays
 let ppts = [];
 let ministerials = [];
 let quizzes = [];
@@ -26,7 +26,6 @@ async function loadDataFromCloud() {
         feedbacks = record.feedbacks || [];
         siteNotification = record.notification || siteNotification;
 
-        // نوێکردنەوەی نیشاندانی ناو ماڵپەڕەکە پاش هاتنی داتاکان
         renderPPTs();
         renderMinisterials();
         renderQuizzes();
@@ -340,7 +339,7 @@ function deleteFeedback(id) {
 
 // Initialization on Page Load
 document.addEventListener("DOMContentLoaded", () => {
-    loadDataFromCloud(); // هێنانی داتاکان لە هەور
+    loadDataFromCloud();
 
     const searchInput = document.getElementById("ppt-search");
     if (searchInput) {
@@ -390,20 +389,13 @@ function editNotification() {
     }
 }
 
-// Add New PPT Lesson
+// Add New PPT Lesson (Using text path input instead of local file blob)
 function addNewPPT(event) {
     event.preventDefault();
     const title = document.getElementById("ppt-title-input").value;
     const cls = document.getElementById("ppt-class-input").value;
     const desc = document.getElementById("ppt-desc-input").value;
-    const fileInput = document.getElementById("ppt-file-input");
-
-    if (fileInput.files.length === 0) {
-        alert("تکایە فایلا پاوەرپۆینتێ هەڵبژێرە!");
-        return;
-    }
-
-    const fileURL = URL.createObjectURL(fileInput.files[0]);
+    const filePath = document.getElementById("ppt-file-input").value.trim();
 
     const newObj = {
         id: Date.now(),
@@ -411,37 +403,30 @@ function addNewPPT(event) {
         class: cls,
         tag: `پۆلا ${cls}ی وێژەیی`,
         desc: desc,
-        link: fileURL
+        link: filePath
     };
 
     ppts.unshift(newObj);
-    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
+    saveDataToCloud();
     renderPPTs();
     event.target.reset();
     alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن بۆ هەور!");
 }
 
-// Add New Ministerial PDF
+// Add New Ministerial PDF (Using text path input)
 function addNewMinisterial(event) {
     event.preventDefault();
     const title = document.getElementById("pdf-title-input").value;
-    const fileInput = document.getElementById("pdf-file-input");
-
-    if (fileInput.files.length === 0) {
-        alert("تکایە فایلا PDF هەڵبژێرە!");
-        return;
-    }
-
-    const fileURL = URL.createObjectURL(fileInput.files[0]);
+    const filePath = document.getElementById("pdf-file-input").value.trim();
 
     const newObj = {
         id: Date.now(),
         title: title,
-        link: fileURL
+        link: filePath
     };
 
     ministerials.unshift(newObj);
-    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
+    saveDataToCloud();
     renderMinisterials();
     event.target.reset();
     alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن بۆ هەور!");
@@ -464,7 +449,7 @@ function addNewQuiz(event) {
     };
 
     quizzes.push(newObj);
-    saveDataToCloud(); // پاشەکەوتکردن ڕاستەوخۆ لە هەوردا
+    saveDataToCloud();
     renderQuizzes();
     event.target.reset();
     alert("پرسیارا کویزی ب سەرکەفتیانە هاتە زێدەکرن بۆ هەور!");
