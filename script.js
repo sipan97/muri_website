@@ -2,18 +2,17 @@ let isAdmin = false;
 
 // 1. ئینانە دەریا داتایان ژ LocalStorage ئەگەر هەبن، ئەگەر نەبن با دەستپێکی بن
 let ppts = JSON.parse(localStorage.getItem('saved_ppts')) || [
-    { id: 1, title: "سەرەتایەک د ئابووری دا", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سەرەتایەک د ئابووری دا.", link: "#" },
-    { id: 2, title: "دیاردەیا هەناردەکرن و هاوردەکرنێ", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ دیاردەیا هەناردەکرن و هاوردەکرنێ.", link: "#" },
-    { id: 3, title: "ململانێیا بازاری و بەرهەم", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ ململانێیا بازاری و بەرهەم.", link: "#" },
-    { id: 4, title: "سیستەمێن دارایی د جیهانێ دا", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیستەمێن دارایی د جیهانێ دا.", link: "#" },
-    { id: 5, title: "داهاتی نەەتەوەیی و گەشەکرن", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ داهاتی نەەتەوەیی و گەشەکرن.", link: "#" },
-    { id: 6, title: "سیاستەتا نەقدی و بەنکا ناوەندی", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیاستەتا نەقدی و بەنکا ناوەندی.", link: "#" }
+    { id: 1, title: "سەرەتایەک د ئابووری دا", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سەرەتایەک د ئابووری دا.", link: "files/10/seretayak.pptx" },
+    { id: 2, title: "دیاردەیا هەناردەکرن و هاوردەکرنێ", class: "10", tag: "پۆلا 10ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ دیاردەیا هەناردەکرن و هاوردەکرنێ.", link: "files/10/hanardakrn.pptx" },
+    { id: 3, title: "ململانێیا بازاری و بەرهەم", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ ململانێیا بازاری و بەرهەم.", link: "files/11/mlmlanya.pptx" },
+    { id: 4, title: "سیستەمێن دارایی د جیهانێ دا", class: "11", tag: "پۆلا 11ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیستەمێن دارایی د جیهانێ دا.", link: "files/11/systemen.pptx" },
+    { id: 5, title: "داهاتی نەەتەوەیی و گەشەکرن", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ داهاتی نەەتەوەیی و گەشەکرن.", link: "files/12/dahati.pptx" },
+    { id: 6, title: "سیاستەتا نەقدی و بەنکا ناوەندی", class: "12", tag: "پۆلا 12ی وێژەیی", desc: "فایلا شیکارکری یا پاوەرپۆینتێ (PPT) تایبەت ب بابەتێ سیاستەتا نەقدی و بەنکا ناوەندی.", link: "files/12/syasea.pptx" }
 ];
 
 let ministerials = JSON.parse(localStorage.getItem('saved_ministerials')) || [
-    { id: 1, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" },
-    { id: 2, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ۲)", link: "#" },
-    { id: 3, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "#" }
+    { id: 1, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ١)", link: "files/ministerial/2023_khola1.pdf" },
+    { id: 2, title: "پرسیارێن وەزاری - ساڵا ۲۰۲۳ (خولا ۲)", link: "files/ministerial/2023_khola2.pdf" }
 ];
 
 let quizzes = JSON.parse(localStorage.getItem('saved_quizzes')) || [
@@ -374,7 +373,7 @@ function editNotification() {
     }
 }
 
-// Add New PPT Lesson (With LocalStorage Saving)
+// Add New PPT Lesson (Direct folder linking + LocalStorage)
 function addNewPPT(event) {
     event.preventDefault();
     const title = document.getElementById("ppt-title-input").value;
@@ -387,7 +386,9 @@ function addNewPPT(event) {
         return;
     }
 
-    const fileURL = URL.createObjectURL(fileInput.files[0]);
+    // وەرگرتنا ناڤێ فایلی ب خۆکارى (بۆ نموونە: lessons.pptx) و گرێدانا وێ ب فۆڵدەرا پۆلێ ve
+    const fileName = fileInput.files[0].name;
+    const fileURL = `files/${cls}/${fileName}`;
 
     const newObj = {
         id: Date.now(),
@@ -399,13 +400,13 @@ function addNewPPT(event) {
     };
 
     ppts.unshift(newObj);
-    localStorage.setItem('saved_ppts', JSON.stringify(ppts)); // پاشەکەوتکرن ل سەرورەی برۆسەرزێ
+    localStorage.setItem('saved_ppts', JSON.stringify(ppts));
     renderPPTs();
     event.target.reset();
-    alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن!");
+    alert("وانە و فایلا پاوەرپۆینت ب سەرکەفتن هاتە زێدەکرن! (دڤێت فایلا تە د ناو فۆڵدەرا files/" + cls + " دا هەبت)");
 }
 
-// Add New Ministerial PDF (With LocalStorage Saving)
+// Add New Ministerial PDF (Direct folder linking + LocalStorage)
 function addNewMinisterial(event) {
     event.preventDefault();
     const title = document.getElementById("pdf-title-input").value;
@@ -416,7 +417,8 @@ function addNewMinisterial(event) {
         return;
     }
 
-    const fileURL = URL.createObjectURL(fileInput.files[0]);
+    const fileName = fileInput.files[0].name;
+    const fileURL = `files/ministerial/${fileName}`;
 
     const newObj = {
         id: Date.now(),
@@ -425,10 +427,10 @@ function addNewMinisterial(event) {
     };
 
     ministerials.unshift(newObj);
-    localStorage.setItem('saved_ministerials', JSON.stringify(ministerials)); // پاشەکەوتکرن
+    localStorage.setItem('saved_ministerials', JSON.stringify(ministerials));
     renderMinisterials();
     event.target.reset();
-    alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن!");
+    alert("فایلا وەزاری ب سەرکەفتن هاتە زێدەکرن! (دڤێت فایلا تە د ناو فۆڵدەرا files/ministerial دا هەبت)");
 }
 
 // Add New Quiz Question (With LocalStorage Saving)
@@ -448,7 +450,7 @@ function addNewQuiz(event) {
     };
 
     quizzes.push(newObj);
-    localStorage.setItem('saved_quizzes', JSON.stringify(quizzes)); // پاشەکەوتکرن
+    localStorage.setItem('saved_quizzes', JSON.stringify(quizzes));
     renderQuizzes();
     event.target.reset();
     alert("پرسیارا کویزی ب سەرکەفتن هاتە زێدەکرن!");
